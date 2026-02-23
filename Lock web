@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOCK - Premium Shoes</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+body{margin:0;font-family:'Poppins',sans-serif;background:#fff;color:#000}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;border-bottom:1px solid #eee}
+.logo{font-size:28px;font-weight:700;letter-spacing:3px}
+.search-bar input{padding:8px 12px;border-radius:20px;border:1px solid #ccc}
+.icons span{margin-left:20px;cursor:pointer;font-weight:600}
+.filters{padding:20px 40px}
+.filters button{margin-right:10px;padding:8px 16px;border-radius:20px;border:1px solid #000;background:#fff;cursor:pointer}
+.filters button.active{background:#000;color:#fff}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;padding:40px}
+.card{background:#000;color:#fff;border-radius:20px;overflow:hidden;transition:0.3s;position:relative}
+.card:hover{transform:scale(1.05)}
+.carousel{position:relative;height:250px;overflow:hidden}
+.carousel img{width:100%;height:250px;object-fit:cover;display:none}
+.carousel img.active{display:block;animation:fade 0.5s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.card-content{padding:15px}
+.size-select select{padding:6px;border-radius:10px;border:none;margin:10px 0}
+.buttons button{padding:8px 12px;border-radius:20px;border:none;margin-right:5px;cursor:pointer}
+.add-cart{background:#fff;color:#000}
+.buy-now{background:#fff;color:#000}
+.wishlist{position:absolute;top:10px;right:15px;font-size:18px;cursor:pointer}
+footer{text-align:center;padding:20px;border-top:1px solid #eee;margin-top:40px}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">LOCK</div>
+<div class="search-bar"><input type="text" id="search" placeholder="Search shoes..."></div>
+<div class="icons">
+<span>❤️ <span id="wishlistCount">0</span></span>
+<span>🛒 <span id="cartCount">0</span></span>
+</div>
+</header><div class="filters">
+<button onclick="filterCategory('All')" class="active">All</button>
+<button onclick="filterCategory('Sneakers')">Sneakers</button>
+<button onclick="filterCategory('Sports')">Sports</button>
+<button onclick="filterCategory('Casual')">Casual</button>
+</div><div class="products" id="productContainer"></div><footer>
+© 2026 LOCK. All rights reserved.
+</footer><script>
+const products=[
+{id:1,name:"Lock Black Sneaker",price:2499,category:"Sneakers",images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff","https://images.unsplash.com/photo-1600185365483-26d7a4cc7519"]},
+{id:2,name:"Lock Sport Runner",price:2899,category:"Sports",images:["https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a","https://images.unsplash.com/photo-1528701800489-20be3c3c9c0f"]}
+];
+
+let cart=0;let wishlist=0;let currentCategory='All';
+
+function displayProducts(){
+const container=document.getElementById('productContainer');
+container.innerHTML='';
+products.filter(p=>currentCategory==='All'||p.category===currentCategory)
+.forEach(product=>{
+let card=document.createElement('div');
+card.className='card';
+card.innerHTML=`
+<div class='wishlist' onclick='addWishlist()'>❤️</div>
+<div class='carousel' id='carousel-${product.id}'>
+${product.images.map((img,i)=>`<img src='${img}' class='${i===0?'active':''}'>`).join('')}
+</div>
+<div class='card-content'>
+<h3>${product.name}</h3>
+<p>₹${product.price}</p>
+<div class='size-select'>
+<select>
+<option>Select Size</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+</select>
+</div>
+<div class='buttons'>
+<button class='add-cart' onclick='addCart()'>Add to Cart</button>
+<button class='buy-now' onclick='checkout(${product.price})'>Buy Now</button>
+</div>
+</div>`;
+container.appendChild(card);
+startCarousel(product.id);
+});
+}
+
+function startCarousel(id){
+let index=0;
+const images=document.querySelectorAll(`#carousel-${id} img`);
+setInterval(()=>{
+images[index].classList.remove('active');
+index=(index+1)%images.length;
+images[index].classList.add('active');
+},3000);
+}
+
+function addCart(){cart++;document.getElementById('cartCount').innerText=cart}
+function addWishlist(){wishlist++;document.getElementById('wishlistCount').innerText=wishlist}
+
+function filterCategory(cat){currentCategory=cat;displayProducts();document.querySelectorAll('.filters button').forEach(btn=>btn.classList.remove('active'));event.target.classList.add('active')}
+
+// Stripe Demo Integration (Replace with your publishable key)
+function checkout(amount){
+alert('Stripe Payment Gateway Integration Required. Replace with your Stripe Publishable Key.');
+}
+
+displayProducts();
+</script></body>
+</html>
